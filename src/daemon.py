@@ -185,6 +185,10 @@ class HydrationDaemon:
         GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGINT,  self._on_sigterm)
 
         self.log.info(f"Daemon started (PID {os.getpid()})")
+        # Anchor the countdown from startup so the TUI shows a live timer immediately
+        if self.state.last_reminder is None:
+            self.state.last_reminder = datetime.now().isoformat()
+            self.state.save()
         self._reschedule()
         try:
             self.loop.run()

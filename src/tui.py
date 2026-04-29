@@ -44,9 +44,10 @@ def _countdown(state: State, config: Config) -> str:
         return "paused"
     idx = min(state.annoyance_level, len(config.levels) - 1)
     interval = config.levels[idx].interval
-    if state.last_reminder is None:
+    ref = state.last_reminder or state.last_drink
+    if ref is None:
         return f"{interval // 60}m 0s"
-    elapsed = (datetime.now() - datetime.fromisoformat(state.last_reminder)).total_seconds()
+    elapsed = (datetime.now() - datetime.fromisoformat(ref)).total_seconds()
     remaining = max(0.0, interval - elapsed)
     m, s = int(remaining / 60), int(remaining % 60)
     return f"{m}m {s}s"
