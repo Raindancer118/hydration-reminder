@@ -106,6 +106,10 @@ Button.primary   { background: #0a5eb5; color: white; }
 Button.muted     { background: #1a3a5c; color: #7aaad0; }
 Button.danger    { background: #5a1010; color: #ff9999; }
 
+.spacer { height: 1; }
+
+#pane-controls Button { width: 100%; margin-bottom: 0; }
+
 Input {
     background: #0a2540;
     border: solid #1a4a7a;
@@ -155,10 +159,13 @@ class HydrationTUI(App):
 
             with Container(id="pane-controls", classes="panel") as c:
                 c.border_title = "Controls"
-                yield Button("✅  I drank!",      id="btn-drink",  classes="primary")
-                yield Button("⏸  Pause",          id="btn-pause",  classes="muted")
-                yield Button("▶  Resume",         id="btn-resume", classes="muted")
-                yield Button("🔄 Reset level",    id="btn-reset",  classes="muted")
+                yield Button("✅  I drank!",       id="btn-drink",  classes="primary")
+                yield Button("⏸  Pause",           id="btn-pause",  classes="muted")
+                yield Button("▶  Resume",          id="btn-resume", classes="muted")
+                yield Button("🔄 Reset level",     id="btn-reset",  classes="muted")
+                yield Static(" ", classes="spacer")
+                yield Button("▶  Start daemon",   id="btn-start",  classes="primary")
+                yield Button("⏹  Stop daemon",    id="btn-stop",   classes="danger")
 
         with Container(classes="panel") as c:
             c.border_title = "Settings"
@@ -172,12 +179,6 @@ class HydrationTUI(App):
             with Horizontal(classes="row"):
                 yield Label("Auto-start", classes="lbl")
                 yield Switch(value=self._config.autostart, id="switch-autostart")
-
-        with Container(classes="panel") as c:
-            c.border_title = "Daemon"
-            with Horizontal():
-                yield Button("▶  Start daemon", id="btn-start", classes="primary")
-                yield Button("⏹  Stop daemon",  id="btn-stop",  classes="danger")
 
         yield Footer()
 
