@@ -269,25 +269,28 @@ class HydrationTUI(App):
 
     @on(Button.Pressed, "#btn-start")
     def _start_daemon(self) -> None:
-        if self._state.get_daemon_pid():
+        if State.load().get_daemon_pid():
             self.notify("Daemon is already running.")
             return
-        main_py = Path(__file__).parent.parent / "main.py"
-        subprocess.Popen(
-            [sys.executable, str(main_py), "--daemon"],
-            start_new_session=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+        # Use the hydration binary from the same venv as this process
+        hydration_bin = Path(sys.executable).parent / "hydration"
+        cmd = (
+            [str(hydration_bin), "--daemon"]
+            if hydration_bin.exists()
+            else [sys.executable, str(Path(__file__).parent.parent / "main.py"), "--daemon"]
         )
+        subprocess.Popen(cmd, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.set_timer(0.5, self._tick)
         self.notify("Daemon started.")
 
     @on(Button.Pressed, "#btn-stop")
     def _stop_daemon(self) -> None:
-        pid = self._state.get_daemon_pid()
+        pid = State.load().get_daemon_pid()
         if not pid:
             self.notify("Daemon is not running.")
             return
         os.kill(pid, signal.SIGTERM)
+        self.set_timer(0.5, self._tick)
         self.notify("Daemon stopped.")
 
     # ── Settings changes ──────────────────────────────────────────────────────
