@@ -186,7 +186,7 @@ class HydrationTUI(App):
 
     def on_mount(self) -> None:
         self._refresh_status()
-        self.set_interval(2, self._tick)
+        self.set_interval(1, self._tick)
 
     def _tick(self) -> None:
         self._state = State.load()
